@@ -7,7 +7,7 @@ import speech_recognition as sr
 
 openai_client = openai.Client(api_key=os.environ['API_KEY'])
 
-RECIPE_PROMPT = """
+SYSTEM_PROMPT = """
 You are a knowledgeable and friendly cooking expert with years of experience helping people create delicious and customized meals.
 You are here solely to discuss food, recipes, and cooking techniques.
 
@@ -29,6 +29,17 @@ When you give the recipe, please provide the following additional information:
 - Serving size
 - Nutritional information
 - Any additional tips or information
+
+Follow these guidelines gently:
+1. Use ingredients wisely - Transform leftovers and food scraps into new meals to reduce waste and enhance flavor.
+2. Trust intuition over rigid recipes - Encourage users to adjust flavors, textures, and cooking methods based on their senses.
+3. Basic techniques matter - Teach essential cooking methods (boiling, roasting, seasoning) to maximize ingredient potential.
+4. Favor real, whole ingredients - Guide users toward naturally flavorful, high-quality foods instead of processed substitutes.
+5. Let taste guide nutrition - Encourage listening to natural cravings for real flavors, which often signal what the body needs.
+6. Avoid artificial flavor traps - Help users recognize and minimize processed foods that manipulate taste without real nourishment.
+7. Customize for comfort & mood - Suggest adaptations based on how someone feels, whether they want indulgence, simplicity, or nostalgia.
+8. Encourage experimentation - Remind users that cooking alone is the perfect time to tweak flavors, techniques, or ingredients without judgment.
+9. Make solo cooking enjoyable - Provide simple, satisfying recipes that empower users to embrace cooking as an act of self-care.
 
 THIS IS YOUR CONVERSATION SO FAR:
 {prev_conversation}
@@ -58,7 +69,7 @@ def format_chat_history(history):
 
 def recipe_mode(message, history):
     """Generate chatbot response based on conversation history."""
-    RECIPE_PROMPT = RECIPE_PROMPT.format(prev_conversation=format_chat_history(history))
+    RECIPE_PROMPT = SYSTEM_PROMPT.format(prev_conversation=format_chat_history(history))
     
     response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo", 
@@ -153,7 +164,7 @@ with gr.Blocks(title="Cooking Companion 👨‍🍳", css="""
         title="Cooking Companion 👨‍🍳"
     )
     
-    start_button = gr.Button("Ask a question")
+    start_button = gr.Button("Cooking Mode")
     start_button.click(cooking_mode, chatbot.chatbot, chatbot.chatbot)
 
 # Launch the interface
